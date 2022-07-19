@@ -4,7 +4,6 @@ import torchaudio
 from hparam import hparam as hp
 import numpy as np
 import glob
-import librosa
 import math
 
 def form_list(fpath):
