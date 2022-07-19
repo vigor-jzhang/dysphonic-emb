@@ -8,8 +8,6 @@ import random
 from hparam import hparam as hp
 from dataloader import emb_dataloader
 from model import SpeechClassifier, GE2ELoss
-from test_class import test_class
-from test_embs import test_embs
 
 def create_model(ckpt_path):
 	# Define device
@@ -101,7 +99,7 @@ def train(previous_ckpt_path, writer):
 
 if __name__ == '__main__':
 	# Write tensorboard
-	torch.manual_seed(250)
+	torch.manual_seed(233)
 	os.makedirs(hp.train.ckpt_dir, exist_ok=True)
 	writer = SummaryWriter(hp.train.ckpt_dir)
 	# Restore ckpt or create new
@@ -117,10 +115,5 @@ if __name__ == '__main__':
 	for epoch in range(start_epoch,hp.train.epochs,hp.train.ckpt_interval):
 		# Training
 		now_ckpt = train(previous_ckpt, writer)
-		# Testing
-		test_class(now_ckpt, writer)
-		test_embs(now_ckpt)
-		# Finally, change previous ckpt path
-		#os.remove(previous_ckpt)
 		previous_ckpt = now_ckpt
 

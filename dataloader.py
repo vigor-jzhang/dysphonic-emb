@@ -3,7 +3,6 @@ import torch
 import torchaudio
 from hparam import hparam as hp
 import numpy as np
-import augment
 import glob
 import librosa
 import math
@@ -46,6 +45,16 @@ def IR_aug(audio,sr):
 	audio = torch.from_numpy(np.float32(audio)).unsqueeze(0)
 	return audio
 
+def pitch_shifting(audio, sr, random_pitch):
+	effects = [
+		['pitch', str(int(random_pitch))],
+		['rate', str(int(sr))],
+	]
+	audio, post_sr = torchaudio.sox_effects.apply_effects_tensor(audio, sr, effects)
+	if post_sr != sr:
+		raise ValueError(f'Pitch shifting output wrong sampling rate {post_sr}.')
+	return audio
+
 def aug_part(audio, sr):
 	# Define random effect application
 	flag = [random.randint(0,1),random.randint(0,1),random.randint(0,1),random.randint(0,1)]
@@ -68,15 +77,8 @@ def aug_part(audio, sr):
 		noise_level = random.random()*0.01
 		audio = audio+bgn*noise_level
 	if flag[3]==1:
-		src_info = {'rate': sr}
-		target_info = {
-			'channels': 1,
-			'length': 0,
-			'rate': sr,
-		}
-		random_pitch = lambda: np.random.randint(-200, 200)
-		audio = augment.EffectChain().pitch(random_pitch).rate(sr).apply(\
-			audio, src_info=src_info, target_info=target_info)
+		random_pitch = np.random.randint(-200, 200)
+		audio = pitch_shifting(audio, sr, random_pitch)
 	return audio
 
 def gen_spec_from_wav(f):
@@ -148,13 +150,9 @@ class EmbSEDataset(torch.utils.data.Dataset):
 		self.label = label
 
 	def __len__(self):
-		#return int(len(self.n_w_list)+len(self.n_m_list))
 		return int(len(self.n_w_list))
 
 	def __getitem__(self, idx):
-		#tag_list = ['a_n','a_l','a_h','i_n','i_l','i_h','u_n','u_l','u_h']
-		#random.shuffle(tag_list)
-		#now_tag = tag_list[0]
 		now_tag = 'a_n'
 		# Male or female depend on odd or even
 		if idx%2==0:
@@ -168,7 +166,6 @@ class EmbSEDataset(torch.utils.data.Dataset):
 			norm_spec = get_spec(self.n_w_list,hp.train.wav_n,now_tag)
 			patho_spec = get_spec(self.p_w_list,hp.train.wav_n,now_tag)
 		# Stack spec
-		#spec = torch.cat([norm_spec,patho_spec],dim=0)
 		return {
 			'norm_spec': norm_spec,
 			'patho_spec': patho_spec,

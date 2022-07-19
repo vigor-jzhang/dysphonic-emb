@@ -3,7 +3,7 @@ device: "cuda:0"
 ---
 data:
   sr: 25000
-  frames: 24 # Crop size for training, about 16640 points
+  frames: 24
   hop_size: 512
   n_fft: 2048
 ---
@@ -15,18 +15,16 @@ model:
   class_n: 2
 ---
 train:
-  train_path: './ml_svdsplit/flist8/train/'
+  train_path: '/home/vigor/DATA/SE_dis/flist/train/'
   epochs: 100000
   wav_n: 16
   batch_size: 1
   num_workers: 8
   lr: 0.001 # Learning rate
-  ckpt_interval: 2
+  ckpt_interval: 5
   ckpt_dir: './ckpt'
   restoring: !!bool 'False'
   restore_path: './ckpt/ckpt_'
 ---
 test:
-  test_path: './ml_svdsplit/flist8/test/'
-  meei_path: '/home/vigor/DATA/SE_dis/MEEI/'
-  mat_save_path: './ckpt/mat_log.mat'
+  test_path: '/home/vigor/DATA/SE_dis/flist/test/'
