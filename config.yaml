@@ -15,11 +15,11 @@ model:
   class_n: 2
 ---
 train:
-  train_path: '/home/vigor/DATA/SE_dis/flist/train/'
+  train_path: './example/flist/train/'
   epochs: 100000
-  wav_n: 16
+  wav_n: 2
   batch_size: 1
-  num_workers: 8
+  num_workers: 1
   lr: 0.001 # Learning rate
   ckpt_interval: 5
   ckpt_dir: './ckpt'
@@ -27,4 +27,4 @@ train:
   restore_path: './ckpt/ckpt_'
 ---
 test:
-  test_path: '/home/vigor/DATA/SE_dis/flist/test/'
+  test_path: './example/flist/test/'

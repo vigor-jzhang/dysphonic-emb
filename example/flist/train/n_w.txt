@@ -1,0 +1,4 @@
+./example/data/35_n_w_22_35_a_n.wav
+./example/data/1168_n_w_20_2196_a_n.wav
+./example/data/865_n_w_19_1109_a_n.wav
+./example/data/640_n_w_21_735_a_n.wav
